@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Effet de frappe avec voix</title>
+    <style>
+        body {
+            background-color: #282c34;
+            color: #ffffff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+            font-size: 2em; /* Taille de police par défaut */
+        }
+
+        #typing-container {
+            border-right: 2px solid white;
+            padding-right: 5px;
+            white-space: pre-wrap; /* Maintient les espaces et les sauts de ligne */
+            overflow: hidden; /* Cache le texte qui n'est pas encore tapé */
+            animation: blink-caret 0.75s step-end infinite;
+        }
+
+        /* Animation pour le curseur clignotant */
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: white; }
+        }
+
+        /* Pour les petits écrans */
+        @media (max-width: 600px) {
+            body {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="typing-container"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const container = document.getElementById("typing-container");
+            const textToType = "Bonjour, ceci est un exemple de texte qui s'affiche avec un effet de frappe et une voix. Vous pouvez modifier ce texte dans le code pour personnaliser le message. Profitez-en pour créer quelque chose d'unique sur votre page Wikidot !";
+            let charIndex = 0;
+
+            /**
+             * Fonction pour la synthèse vocale.
+             * Elle est appelée avant l'effet de frappe pour la synchronisation.
+             */
+            function textToSpeech() {
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(textToType);
+                    utterance.lang = 'fr-FR';
+
+                    // Facultatif : Événements de début et de fin
+                    utterance.onstart = () => { console.log('Synthèse vocale démarrée.'); };
+                    utterance.onend = () => { console.log('Synthèse vocale terminée.'); };
+
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    console.log("L'API de synthèse vocale n'est pas supportée par ce navigateur.");
+                }
+            }
+
+            /**
+             * Fonction pour l'effet de frappe.
+             * Ajoute un caractère à la fois au conteneur.
+             */
+            function typeWriter() {
+                if (charIndex < textToType.length) {
+                    container.textContent += textToType.charAt(charIndex);
+                    charIndex++;
+                    setTimeout(typeWriter, 70); // Ajustez cette valeur pour changer la vitesse de frappe (en millisecondes)
+                }
+            }
+
+            // Démarrage de l'effet
+            textToSpeech(); // La voix démarre
+            typeWriter();  // L'écriture démarre
+        });
+    </script>
+
+</body>
+</html>
